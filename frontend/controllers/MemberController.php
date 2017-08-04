@@ -14,6 +14,7 @@ use yii\web\Request;
 
 class MemberController extends \yii\web\Controller
 {
+    //x
     public $layout=false;
     //注册用户
     public function actionRegister(){
