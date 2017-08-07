@@ -14,7 +14,6 @@ use yii\web\Request;
 
 class MemberController extends \yii\web\Controller
 {
-    //x
     public $layout=false;
     //注册用户
     public function actionRegister(){
@@ -26,7 +25,7 @@ class MemberController extends \yii\web\Controller
             //添加时间
 //            $this->created_at = time();
 //            $this->auth_key = \Yii::$app->security->generateRandomString();
-            $model->save();
+            $model->save(false);
             \yii::$app->session->setFlash('success','注册成功');
             return $this->redirect(['member/login']);
         }
@@ -34,10 +33,6 @@ class MemberController extends \yii\web\Controller
         return $this->render('register',['model'=>$model]);
     }
 
-public function actionIndex(){
-
-        return $this->render('index');
-}
 
     //登录开始
     public function actionLogin(){
@@ -61,25 +56,32 @@ public function actionIndex(){
 
     //添加地址
     public function actionAddress(){
-        //实例化模型
-        $model = new Address();
-        $user_id=\Yii::$app->user->identity->id;
-        $address =$model->find()->where(['user_id'=>$user_id])->all();
-        $request = new Request();
-        //判断提条方式
-        if($request->isPost){
-            //加载数据
-            $model->load($request->post());
-            if( $model->validate()){
-                $model->save();
-                return $this->redirect(['member/address']);
-            }else{
-                //echo 111;
-                var_dump($model->getErrors());exit;
+        if(\Yii::$app->user->isGuest == true){
+            return $this->redirect(['login']);
+        }else{
+            //实例化模型
+            $model = new Address();
+//        var_dump($model);exit;
+//        var_dump(\Yii::$app->user->identity->id);exit;
+            $user_id=\Yii::$app->user->identity->id;
+//        var_dump($user_id);exit;
+            $address =$model->find()->where(['user_id'=>$user_id])->all();
+            $request = new Request();
+            //判断提条方式
+            if($request->isPost){
+                //加载数据
+                $model->load($request->post());
+                if( $model->validate()){
+                    $model->save();
+                    return $this->redirect(['member/address']);
+                }else{
+                    //echo 111;
+                    var_dump($model->getErrors());exit;
+                }
             }
+            //调用视图，分配数据
+            return $this->render('address',['model'=>$model,'address'=>$address]);
         }
-        //调用视图，分配数据
-        return $this->render('address',['model'=>$model,'address'=>$address]);
     }
     //删除地址
     public function actionDelAddress($id){
@@ -147,10 +149,10 @@ public function actionIndex(){
     public function actionLogout(){
 
         \Yii::$app->user->logout();
-        return $this->redirect('member/login');
+        return $this->redirect(['login']);
     }
 
-    public function actionAbc(){
+    public function actionUser(){
         var_dump(\Yii::$app->user->isGuest);
     }
 

@@ -7,6 +7,7 @@ use frontend\models\Address;
 use frontend\models\Cart;
 use frontend\models\Goods;
 use frontend\models\GoodsCategory;
+use frontend\models\GoodsGallery;
 use frontend\models\Order;
 use frontend\models\OrderGoods;
 use yii\db\Exception;
@@ -20,6 +21,7 @@ use yii\web\NotFoundHttpException;
 class GoodsController extends Controller
 {
 
+    //x
     public $enableCsrfValidation = false;
     public $layout = false;
 
@@ -37,8 +39,10 @@ class GoodsController extends Controller
     public function actionContent($id)
     {
         $model = Goods::findOne(['id' => $id]);
+        $goodss = GoodsGallery::find()->where(['goods_id'=>$id])->all();
+//        var_dump($goodss);exit;
 
-        return $this->render('goods', ['model' => $model]);
+        return $this->render('goods', ['model' => $model,'goodss'=>$goodss]);
     }
 
     public function actionAdd()
@@ -259,7 +263,6 @@ class GoodsController extends Controller
     public function actionShop()
     {
         $model = \Yii::$app->request->post();
-//        var_dump($model);exit;
         $order = new Order();
         $delivery = [
             ['id' => '1', 'kd' => '普通快递送货上门', 'jq' => '10.00', 'xq' => '每张订单不满499.00元,运费15.00元, 订单4...'],
@@ -312,6 +315,7 @@ class GoodsController extends Controller
             $ido = \Yii::$app->user->id;
 
             $carts = Cart::find()->where(['member_id' => $ido])->all();
+//            var_dump($carts);exit;
             foreach ($carts as $cart) {
                 //实例化
 
@@ -327,6 +331,7 @@ class GoodsController extends Controller
 
                 $goodsInfo->stock -= $cart->amount;
 
+
                 if($goodsInfo->stock < 0){
                     throw new HttpException('库存不足');
                 }
@@ -334,12 +339,14 @@ class GoodsController extends Controller
                 if(!$goodsInfo->save() || !$order_goods->save()){
                     throw new HttpException('保存失败！');
                 }
+//                $goodsInfo->save();
             }
             if(!Cart::deleteAll(['member_id'=>\Yii::$app->user->id])){
                 throw new HttpException('删除失败！');
             }
 
             $trans->commit();
+
         }catch (HttpException $e){
             $trans->rollBack();
         }
@@ -389,5 +396,11 @@ class GoodsController extends Controller
 //        exit;
         return $this->render('list',['model'=>$model]);
 
+    }
+
+    public function actionOrder1()
+    {
+
+        return $this->redirect(['order1']);
     }
 }

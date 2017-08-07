@@ -81,6 +81,7 @@ $.post("$url",{goods_id:goods_id,amount:amount,"_csrf-frontend":"$token"});
             if(confirm('是否删除该商品')){
                 var goods_id = $(this).closest('tr').attr('data-goods_id');
                 //发送ajax post请求到site/update-cart  {goods_id,amount}
+                console.debug(goods_id);
                 $.post("$url",{goods_id:goods_id,amount:0,"_csrf-frontend":"$token"});
                 //删除当前商品的标签
                 $(this).closest('tr').remove();

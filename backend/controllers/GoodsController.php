@@ -175,7 +175,17 @@ class GoodsController extends \yii\web\Controller
                 'afterValidate' => function (UploadAction $action) {},
                 'beforeSave' => function (UploadAction $action) {},
                 'afterSave' => function (UploadAction $action) {
-                    $action->output['fileUrl'] = $action->getWebUrl();
+                    $goods_id = \Yii::$app->request->post('goods_id');
+                    if($goods_id){
+                        $model = new GoodsGallery();
+                        $model->goods_id = $goods_id;
+                        $model->path = $action->getWebUrl();
+                        $model->save();
+                        $action->output['fileUrl'] = $model->path;
+                        $action->output['id'] = $model->id;
+                    }else{
+                        $action->output['fileUrl'] = $action->getWebUrl();//输出文件的相对路径
+                    }
 //                   $action->getFilename(); // "image/yyyymmddtimerand.jpg"
 //                   $action->getWebUrl(); //  "baseUrl + filename, /upload/image/yyyymmddtimerand.jpg"
 //                   $action->getSavePath(); // "/var/www/htdocs/upload/image/yyyymmddtimerand.jpg"
