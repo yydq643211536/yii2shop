@@ -1,20 +1,18 @@
 <h1>商品列表</h1>
-<P>
-    <?=\yii\bootstrap\Html::a('添加商品',['goods/add'],['class'=>'btn  btn-success glyphicon glyphicon-plus'])?>
-</P>
-<div class="row">
-    <?php $form=\yii\bootstrap\ActiveForm::begin(['options' =>['class' => 'navbar-form navbar-left'],]);?>
-    <?= $form->field($model,'keyword')->textInput(['placeholder'=>'标题'])->label('');?>
-    <?= $form->field($model,'goods_sn')->textInput(['placeholder'=>'货号'])->label('');?>
-    <?= $form->field($model,'price_small')->textInput(['placeholder'=>'￥'])->label('');?>
-    <?= $form->field($model,'price_big')->textInput(['placeholder'=>'￥'])->label('&nbsp;——');?>
-    <?= $form->field($model,'goods_sale')->radioList(['1'=>'在售','0'=>'下线'],['class'=>'radio-inline'])->label('')?>
-    <div class="form-group" style="position: relative;top: -6px;left: 10px;">
-        <?= \yii\bootstrap\Html::submitButton('搜索',['class'=>'btn btn-primary glyphicon glyphicon-search']);?>
-    </div>
-    <?php \yii\bootstrap\ActiveForm::end(); ?>
-</div>
-<p></p>
+<?php
+$form = \yii\bootstrap\ActiveForm::begin([
+    'method' => 'get',
+    //get方式提交,需要显式指定action
+    'action'=>\yii\helpers\Url::to(['goods/index']),
+    'layout'=>'inline'
+]);
+echo $form->field($model,'name')->textInput(['placeholder'=>'商品名'])->label();
+echo $form->field($model,'sn')->textInput(['placeholder'=>'货号'])->label(false);
+echo $form->field($model,'minPrice')->textInput(['placeholder'=>'￥'])->label(false);
+echo $form->field($model,'maxPrice')->textInput(['placeholder'=>'￥'])->label('-');
+echo \yii\bootstrap\Html::submitButton('<span class="glyphicon glyphicon-search"></span>搜索',['class'=>'btn btn-default']);
+\yii\bootstrap\ActiveForm::end();
+?>
 <table class="table table-bordered table-condensed table-hover">
     <tr>
         <td>ID</td>
@@ -33,7 +31,7 @@
         <td>LOGO</td>
         <td>操作</td>
     </tr>
-    <?php foreach ($goods as $good): ?>
+    <?php foreach ($models as $good): ?>
         <tr>
             <td><?=$good->id?></td>
             <td><?=$good->name?></td>

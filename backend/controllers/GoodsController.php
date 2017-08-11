@@ -1,9 +1,11 @@
 <?php
 
 namespace backend\controllers;
+use backend\filters\RbacFilter;
 use backend\models\GoodsCategory;
 use backend\models\GoodsGallery;
 use backend\models\GoodsForm;
+use backend\models\GoodsSearchForm;
 use flyok666\uploadifive\UploadAction;
 use backend\models\Goods;
 use backend\models\GoodsDayCount;
@@ -17,26 +19,27 @@ class GoodsController extends \yii\web\Controller
 {
     public function actionIndex()
     {
-        $model = new Goods();
+//        return false;
+        $model = new GoodsSearchForm();
+//        var_dump($model);exit;
+        $query = Goods::find();
+//        var_dump($query);exit;
 
-        $request=new Request();
-        if($request->isPost){
-            $model->load($request->post());
-            $query=Goods::find()->andFilterWhere(['like','name',$model->keyword])->andFilterWhere(['like','sn',$model->goods_sn])->andFilterWhere(['between','shop_price',$model->price_small,$model->price_big])->andFilterWhere(['=','status',$model->goods_sale])->andFilterWhere(['<>','status','0']);
-        }else{
-            $query=Goods::find()->where(['<>','status','0'])->orderBy(['sort'=>'desc']);
-        }
-        //获取总数量
-        $total=$query->count();
-        //每页显示多少条
-        $page_size=5;
-        $pager=new Pagination([
-            'totalCount'=>$total,
-            'defaultPageSize'=>$page_size,
+        //接收表单提交的查询参数
+        $model->search($query);
+
+
+        //商品名称含有"耳机"的  name like "%耳机%"
+        //$query = Goods::find()->where(['like','name','耳机']);
+        $pager = new Pagination([
+            'totalCount'=>$query->count(),
+            'pageSize'=>5
         ]);
-        $goods=$query->limit($pager->limit)->offset($pager->offset)->all();
-        //调用视图分配数据
-        return $this->render('index',['goods'=>$goods,'pager'=>$pager,'model'=>$model]);
+
+        $models = $query->limit($pager->limit)->offset($pager->offset)->all();
+
+
+        return $this->render('index',['models'=>$models,'pager'=>$pager,'model'=>$model]);
     }
 
     /**
@@ -211,6 +214,16 @@ class GoodsController extends \yii\web\Controller
         }
         return $this->render('view',['model'=>$model]);
 
+    }
+
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'only'=>['index','add','edit','delete'],
+            ]
+        ];
     }
 
 

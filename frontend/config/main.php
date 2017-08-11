@@ -48,10 +48,10 @@ return [
         ],
         'sms'=>[
             'class'=>\frontend\components\AliyunSms::className(),
-            'accessKeyId'=>'LTAIrerdM4zn8GSV',
-            'accessKeySecret'=>'DZtwiEYwrA3EmqIOCegn6U4xZQYOsx',
-            'signName'=>'小亮的茶馆',
-            'templateCode'=>'SMS_80195051'
+            'accessKeyId'=>'LTAICuUtANODiHze',
+            'accessKeySecret'=>'2kjoxKnLnGHTl0OXt5ltJ1XPK4btot',
+            'signName'=>'肖先生茶馆',
+            'templateCode'=>'SMS_80045057'
         ]
 
 

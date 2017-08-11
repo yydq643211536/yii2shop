@@ -2,12 +2,13 @@
 namespace frontend\controllers;
 
 
-use frontend\comporents\SphinxClient;
+use frontend\components\SphinxClient;
 use frontend\models\Address;
 use frontend\models\Cart;
 use frontend\models\Goods;
 use frontend\models\GoodsCategory;
 use frontend\models\GoodsGallery;
+use frontend\models\GoodsSearchForm;
 use frontend\models\Order;
 use frontend\models\OrderGoods;
 use yii\db\Exception;
@@ -25,15 +26,31 @@ class GoodsController extends Controller
     public $enableCsrfValidation = false;
     public $layout = false;
 
+
+
+    public function actionIndex1()
+    {
+//        $model = new GoodsSearchForm();
+//        $query = Goods::find();
+//        $model->search($query);
+        $goods =GoodsCategory::find()->where(['parent_id'=>0])->all();
+
+        $model = Goods::find()->all();
+//        var_dump($model);exit;
+        return $this->render('index',['goods'=>$goods,'model'=>$model]);
+    }
     public function actionIndex($goods_id)
     {
+        $model = new GoodsSearchForm();
+        $query = Goods::find();
+        $model->search($query);
         $id = \Yii::$app->request->get('goods_id', '');
         if (!$goods_id) {
             $models = Goods::find()->limit(7)->all();
         } else {
             $models = Goods::findAll(['goods_category_id' => $goods_id]);
         }
-        return $this->render('list', ['models' => $models]);
+        return $this->render('list', ['models' => $models,'model'=>$model]);
     }
 
     public function actionContent($id)
@@ -291,6 +308,7 @@ class GoodsController extends Controller
         $order->city = $address->city;
         $order->area = $address->area;
         $order->address = $address->detail;
+//        var_dump($order->address);exit;
 
         $order->tel = $address->tel;
 
@@ -366,10 +384,6 @@ class GoodsController extends Controller
 
     }
 
-    public function actionIndex1(){
-        $this->layout = 'index';
-        return $this->render('index');
-    }
     //分词搜索
     public function actionSou(){
         $info=\Yii::$app->request->get($name='ke');
@@ -391,16 +405,49 @@ class GoodsController extends Controller
         }
         $ids=ArrayHelper::map($res['matches'],'id','id');
 
-        $model=Goods::findAll(['id'=>$ids]);
+        $models=Goods::findAll(['id'=>$ids]);
 //        var_dump($model);
 //        exit;
-        return $this->render('list',['model'=>$model]);
+        return $this->render('z',['models'=>$models]);
 
     }
 
-    public function actionOrder1()
+    public function actionTest()
     {
-
-        return $this->redirect(['order1']);
+        $cl = new SphinxClient();
+        $cl->SetServer ( '127.0.0.1', 9312);
+        //$cl->SetConnectTimeout ( 10 );
+        $cl->SetArrayResult ( true );
+// $cl->SetMatchMode ( SPH_MATCH_ANY);
+        $cl->SetMatchMode ( SPH_MATCH_ALL);
+        $cl->SetLimits(0, 1000);
+        $info = '明明';
+        $res = $cl->Query($info, 'goods');//shopstore_search
+//print_r($cl);
+        print_r($res);
     }
+
+    public function actionSearch($name){
+        $cl = new SphinxClient();
+        $cl->SetServer ( '127.0.0.1', 9312);
+
+        $cl->SetArrayResult ( true );
+
+        $cl->SetMatchMode ( SPH_MATCH_EXTENDED2);
+        $cl->SetLimits(0, 1000);
+
+        $res = $cl->Query($name, 'goods');
+        if($res && isset($res['matches'])){
+            $gids=ArrayHelper::getColumn($res['matches'],'id');
+            //分类数据信息
+//            $goods=GoodsCategory::find()->where(['parent_id'=>0])->all();
+            $model=Goods::find()->where(['in','id',$gids])->all();
+            $goods =GoodsCategory::find()->where(['parent_id'=>0])->all();
+//            var_dump($model);exit;
+            return $this->render('index',['goods'=>$goods,'model'=>$model]);
+        }else{
+            echo '没有搜索到商品';
+        }
+    }
+
 }

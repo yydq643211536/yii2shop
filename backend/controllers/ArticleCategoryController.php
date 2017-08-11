@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\filters\RbacFilter;
 use backend\models\ArticleCategory;
 use yii\data\Pagination;
 use yii\db\ActiveRecord;
@@ -61,5 +62,15 @@ class ArticleCategoryController extends \yii\web\Controller
         $model->status = -1;
         $model->save();
         return $this->redirect(['article-category/index']);
+    }
+
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'only'=>['index','edit','delete','add'],
+            ]
+        ];
     }
 }

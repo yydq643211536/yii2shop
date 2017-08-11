@@ -13,7 +13,7 @@ class AddressController extends Controller
     public function actionIndex()
     {
 if(!\Yii::$app->user->isGuest){
-    $mode=Address::find()->where(['member_id'=>\Yii::$app->user->identity->getId()])->all();
+    $mode=Address::find()->where(['user_id'=>\Yii::$app->user->identity->getId()])->all();
 }
 if(\Yii::$app->user->isGuest){
     $mode=Address::find()->where(['user_id'=>null])->all();
@@ -25,14 +25,14 @@ if(\Yii::$app->user->isGuest){
                 \Yii::$app->session->setFlash('danger','请先登录成功');
                 return $this->redirect(['address/index']);
             }
-            $model->member_id=\Yii::$app->user->identity->getId();
-            if($model->is_default=1){
-                \Yii::$app->db->createCommand()->update('address', ['is_default' => 0])->execute();
+            $model->user_id=\Yii::$app->user->identity->getId();
+            if($model->status=1){
+                \Yii::$app->db->createCommand()->update('address', ['status' => 0])->execute();
 
             }
            $model->save();
             \Yii::$app->session->setFlash('success','添加成功');
-            return $this->render('index', ['model' =>$model,'mode'=>$mode]);
+
         }
         return $this->render('index', ['model' =>$model,'mode'=>$mode]);
     }

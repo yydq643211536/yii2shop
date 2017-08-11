@@ -77,7 +77,7 @@
                     <input type="text" class="txt" value="<?=$model->tel?>" name="Member[tel]" id="telnum" placeholder=""/>
                 </li>
                 <li>
-                    <label for="">验证码：</label>
+                    <label for="">手机验证码：</label>
                     <input type="text" class="txt" value="" placeholder="请输入短信验证码" name="captcha" disabled="disabled" id="captcha"/> <input type="button" onclick="bindPhoneNum(this)" id="get_captcha" value="获取验证码" style="height: 25px;padding:3px 8px"/>
 
                 </li>

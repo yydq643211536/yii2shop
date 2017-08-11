@@ -25,6 +25,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     public $password;
     public $repassword;
     public $code;//验证码
+    public $sms;//手机验证
     /**
      * @inheritdoc
      */
@@ -39,7 +40,7 @@ class Member extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username','password','email','repassword','tel'],'required','message'=>'{attribute}不能为空'],
+            [['username','password','email','tel'],'required','message'=>'{attribute}不能为空'],
             [['username','email'],'unique'],
             [['last_login_time', 'last_login_ip', 'status', 'created_at', 'update_at'], 'integer'],
             [['username'], 'string', 'max' => 50],

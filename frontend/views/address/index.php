@@ -4,7 +4,7 @@
 
         <?php foreach ($mode as $mode):?>
             <dl>
-                <dt><?=$mode->name?> <?=$mode->province?> <?=$mode->city?><?=$mode->county?><?=$mode->tel?></dt>
+                <dt><?=$mode->name?> <?=$mode->province?> <?=$mode->city?><?=$mode->area?><?=$mode->tel?></dt>
                 <dd><?=\yii\bootstrap\Html::a('删除',['address/delete','id'=>$mode->id],['class'=>'btn btn-danger btn-xs'])?>
                     <?=\yii\bootstrap\Html::a('修改',['address/edit','id'=>$mode->id],['class'=>'btn btn-danger btn-xs'])?>
                     <?=\yii\bootstrap\Html::a('设置为默认地址',['address/moren','id'=>$mode->id],['class'=>'btn btn-danger btn-xs'])?></dd>
@@ -29,12 +29,12 @@
             <li><label for="">所在地区：</label>
                 <?=$form->field($model,'province',['template' => "{input}",'options'=>['tag'=>false]])->dropDownList([''=>'=选择省=']);?>
                 <?=$form->field($model,'city',['template' => "{input}",'options'=>['tag'=>false]])->dropDownList([''=>'=选择市=']);?>
-                <?=$form->field($model,'county',['template' => "{input}",'options'=>['tag'=>false]])->dropDownList([''=>'=选择县=']);?>
+                <?=$form->field($model,'area',['template' => "{input}",'options'=>['tag'=>false]])->dropDownList([''=>'=选择县=']);?>
             </li>
 
             <?=$form->field($model,'detail')->textInput(['class'=>'txt']);?>
             <?=$form->field($model,'tel')->textInput(['class'=>'txt']);?>
-            <?=$form->field($model,'is_default')->checkbox();?>
+            <?=$form->field($model,'status')->checkbox();?>
             <li>
                 <label for="">&nbsp;</label>
                 <input type="submit" name="" class="btn" value="保存" />
@@ -72,7 +72,7 @@ $this->registerJs(new \yii\web\JsExpression(
             }
         });
         //将县的下拉框数据清空
-        $("#address-county").html('<option value="">=请选择县=</option>');
+        $("#address-area").html('<option value="">=请选择县=</option>');
     });
     //切换（选中）市，读取该市 对应的县，更新到县下拉框
     $("#address-city").change(function(){
@@ -86,7 +86,7 @@ $this->registerJs(new \yii\web\JsExpression(
                         $(this.area).each(function(i,v){
                             option += '<option value="'+v+'">'+v+'</option>';
                         });
-                        $("#address-county").html(option);
+                        $("#address-area").html(option);
                     }
                 });
             }
@@ -102,8 +102,8 @@ if($model->province){
 if($model->city){
     $js .= '$("#address-province").change();$("#address-city").val("'.$model->city.'");';
 }
-if($model->county){
-    $js .= '$("#address-city").change();$("#address-county").val("'.$model->county.'");';
+if($model->area){
+    $js .= '$("#address-city").change();$("#address-area").val("'.$model->area.'");';
 }
 $this->registerJs($js);
 

@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\filters\RbacFilter;
 use backend\models\Menu;
 
 class MenuController extends \yii\web\Controller
@@ -40,9 +41,14 @@ class MenuController extends \yii\web\Controller
         return $this->render('add',['model'=>$model]);
     }
 
-    public function actionDelete($id)
+    public function behaviors()
     {
-
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'only'=>['index','edit','delete','add'],
+            ]
+        ];
     }
 }
  

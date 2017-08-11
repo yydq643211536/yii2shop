@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\filters\RbacFilter;
 use backend\models\Admin;
 use backend\models\ChpwForm;
 use backend\models\LoginForm;
@@ -183,5 +184,6 @@ class AdminController extends \yii\web\Controller
 
         return $this->render('password',['model'=>$model]);
     }
+
 
 }

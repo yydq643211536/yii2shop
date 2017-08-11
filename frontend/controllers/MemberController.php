@@ -45,7 +45,7 @@ class MemberController extends \yii\web\Controller
                 //var_dump($model);exit;
                // var_dump($model);exit;
                 \yii::$app->session->setFlash('success','登陆成功');
-                return $this->redirect(['index/index']);
+                return $this->redirect(['goods/index1']);
             }else{
                 //var_dump($model->getErrors());exit;
             }

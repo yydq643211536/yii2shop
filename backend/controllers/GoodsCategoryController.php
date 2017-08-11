@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\filters\RbacFilter;
 use backend\models\GoodsCategory;
 use yii\db\Exception;
 use yii\web\ForbiddenHttpException;
@@ -157,5 +158,15 @@ class GoodsCategoryController extends \yii\web\Controller
         //$this->layout = false;
         //不加载布局文件
         return $this->renderPartial('ztree');
+    }
+
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'only'=>['index','edit','delete','add'],
+            ]
+        ];
     }
 }

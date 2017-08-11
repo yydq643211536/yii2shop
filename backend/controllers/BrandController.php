@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\filters\RbacFilter;
 use backend\models\Brand;
 use yii\data\Pagination;
 use yii\web\Request;
@@ -171,5 +172,15 @@ class BrandController extends \yii\web\Controller
         //获取改图片在七牛云的地址
         $url = $qiniu->getLink($key);
         var_dump($url);exit;
+    }
+
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'only'=>['index','edit','delete','add'],
+            ]
+        ];
     }
 }
